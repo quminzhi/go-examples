@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "github.com/quminzhi/go-examples/grpc-example/route";
+
+// he Interface Definition Language (IDL) is a language for specifying
+// operations (procedures or functions), parameters to these operations, and
+// data types.
+
+package route;
+
+message Point {
+  int32 latitude = 1; // tag starting from 1
+  int32 longitude = 2;
+}
+
+message Rectangle {
+  Point lo = 1;
+  Point hi = 2;
+}
+
+message Feature {
+  string name = 1;
+  Point location = 2;
+}
+
+message RouteSummary {
+  int32 point_count = 1;
+  int32 distance = 2;
+  int32 elapsed_time = 3;
+}
+
+enum RecommendationMode {
+  GetFarthest = 0; // tag of enum starts from 0
+  GetNearest = 1;
+}
+
+message RecommendationRequest {
+  RecommendationMode mode = 1;
+  Point point = 2;
+}
+
+service RouteGuide {
+  // unary
+  rpc GetFeature(Point) returns (Feature) {}
+  // server-side streaming
+  rpc ListFeatures(Rectangle) returns (stream Feature) {}
+  // client-side streaming
+  rpc RecordRoute(stream Point) returns (RouteSummary) {}
+  // bidirectional streaming
+  rpc Recommend(stream RecommendationRequest) returns (stream Feature) {}
+}
